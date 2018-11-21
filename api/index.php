@@ -16,13 +16,8 @@ if(function_exists($funcionNombre))
 	call_user_func_array ($funcionNombre, $parametros);
 else
   header(' ', true, 400);
-
-if(!$bd) {
-		header(' ',true, 500);
-		print mysqli_error();
-		die;
-  }
   
+///GET  
 
 function getUsuarios(){
   echo ('entro al get');
@@ -44,6 +39,8 @@ function getUsuarios(){
     mysqli_close($link);
 }
 
+///POST
+
 function postUsuarios(){
   $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if(!$link){
@@ -63,7 +60,74 @@ function postUsuarios(){
   }else{
     header (' ', true, 500);
   }
-  mysqli_free_result($query);
   mysqli_close($link);
   }
+///GET CON PARAMETROS///
+
+  function getUsuarioConParametros($id){
+    $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
+    if (!$link){
+      header(' ',true, 500);
+      print mysqli_error();
+      die;
+    }
+    mysqli_set_charset($link,'utf8');
+    $query= mysqli_query($link,"SELECT * FROM usuario WHERE id = $id");
+    
+    if ($usuario=mysqli_fetch_assoc($query)) {
+    header('Content-Type: application/json');
+    print json_encode($usuario);
+    }
+    else
+    {
+      header(' ',true,404);
+    }
+    mysqli_free_result($query);
+    mysqli_close($link);
+  }
+
+  function patchUsuario($id){
+    $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
+    if(!$link){
+    header(' ',true,500); 
+    print mysqli_error();
+    die;
+    }
+    mysqli_set_charset($link, 'utf8');
+    $usuario=json_decode(file_get_contents('php://input'), true);
+    $q=("SELECT * FROM usuario WHERE id=='$id'");
+    $query=mysqli_query($link,$q);  
+    if ($query){
+      header(' ', true, 201);
+    }else{
+      header (' ', true, 500);
+    }
+    mysqli_close($link);
+  }
+
+  function deleteUsuario($id){
+    $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
+    if(!$link){
+      header(' ',true,500);
+      print mysqli_error();
+      die;
+    }
+    mysqli_set_charset($link,'utf8');
+    $id=$id+0;
+
+    $query="DELETE FROM usuario WHERE id=$id";
+      
+    $res=mysqli_query($link,$query);
+    if($res){
+      header (' ', true,201);
+    }
+    else{
+      header (' ',true,500);
+    }
+    mysqli_close($link);
+  }
+
+
+  
+ 
   ?>
