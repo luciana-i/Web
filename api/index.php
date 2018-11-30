@@ -20,7 +20,6 @@ else
 ///GET  
 
 function getUsuarios(){
-  echo ('entro al get');
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if(!$link){
 		header(' ',true,500); 
@@ -28,7 +27,7 @@ function getUsuarios(){
 		die;
     }
     mysqli_set_charset($link, 'utf8');
-    $query=mysqli_query($link,"SELECT * FROM Usuario");
+    $query=mysqli_query($link,"SELECT * FROM usuario");
     $usuarios=[];
     while($usuario=mysqli_fetch_assoc($query)){
             $usuarios[]=$usuario;
@@ -63,7 +62,7 @@ function postUsuarios(){
   mysqli_close($link);
   }
 ///GET CON PARAMETROS///
-
+/*
   function getUsuarioConParametros($id){
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if (!$link){
@@ -125,9 +124,61 @@ function postUsuarios(){
       header (' ',true,500);
     }
     mysqli_close($link);
+  } 
+ */
+  function getImagen(){
+    $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
+    if(!$link){
+    header(' ',true,500); 
+    print mysqli_error();
+    die;
+    }
+    mysqli_set_charset($link, 'utf8');
+    $query=mysqli_query($link,"SELECT * FROM imagen");
+    $imagenes=[];
+    while($imagen=mysqli_fetch_assoc($query)){
+            $imagenes[]=$imagen;
+    }
+    header('Content-Type: application/json');
+    print json_encode($imagenes);
+    mysqli_free_result($query);
+    mysqli_close($link);
+  }
+
+  function getComentario(){
+    $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
+    if(!$link){
+    header(' ',true,500); 
+    print mysqli_error();
+    die;
+    }
+    mysqli_set_charset($link, 'utf8');
+    $query=mysqli_query($link,"SELECT * FROM comentario");
+    $comentarios=[];
+    while($comentario=mysqli_fetch_assoc($query)){
+            $comentarios[]=$comentario;
+    }
+    header('Content-Type: application/json');
+    print json_encode($comentarios);
+    mysqli_free_result($query);
+    mysqli_close($link);
+  }
+  function getMuro($id){
+    $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
+    if(!$link){
+    header(' ',true,500); 
+    print mysqli_error();
+    die;
+    }
+    mysqli_set_charset($link, 'utf8');
+    $query=mysqli_query($link,"SELECT * FROM muro WHERE id_usuario=$id");
+    header('Content-Type: application/json');
+    print json_encode($query);
+    mysqli_free_result($query);
+    mysqli_close($link);
   }
 
 
-  
- 
+
+
   ?>
