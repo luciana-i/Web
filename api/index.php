@@ -3,8 +3,9 @@ require_once('config.php');
 
 $bd = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
 
-$metodo = strtolower($_SERVER['REQUEST_METHOD']);
-$comandos = explode('/', strtolower($_GET['value']));
+
+$metodo =strtolower($_SERVER['REQUEST_METHOD']);
+$comandos = explode('/',strtolower($_GET['value']);
 $funcionNombre = $metodo.ucfirst($comandos[0]);
 
 $parametros = array_slice($comandos, 1);
@@ -62,8 +63,8 @@ function postUsuarios(){
   mysqli_close($link);
   }
 ///GET CON PARAMETROS///
-/*
-  function getUsuarioConParametros($id){
+
+  function getUsuariosConParametros($id){
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if (!$link){
       header(' ',true, 500);
@@ -84,7 +85,7 @@ function postUsuarios(){
     mysqli_free_result($query);
     mysqli_close($link);
   }
-
+/*
   function patchUsuario($id){
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if(!$link){
