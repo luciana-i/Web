@@ -5,7 +5,7 @@ $bd = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
 
 
 $metodo =strtolower($_SERVER['REQUEST_METHOD']);
-$comandos = explode('/',strtolower($_GET['value']);
+$comandos = explode('/',strtolower($_GET['value']));
 $funcionNombre = $metodo.ucfirst($comandos[0]);
 
 $parametros = array_slice($comandos, 1);
@@ -39,6 +39,27 @@ function getUsuarios(){
     mysqli_close($link);
 }
 
+function getUsuariosConParametros($id){
+  $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
+  if (!$link){
+    header(' ',true, 500);
+    print mysqli_error();
+    die;
+  }
+  mysqli_set_charset($link,'utf8');
+  $query= mysqli_query($link,"SELECT * FROM usuario WHERE id = $id");
+  
+  if ($usuario=mysqli_fetch_assoc($query)) {
+  header('Content-Type: application/json');
+  print json_encode($usuario);
+  }
+  else
+  {
+    header(' ',true,404);
+  }
+  mysqli_free_result($query);
+  mysqli_close($link);
+}
 ///POST
 
 function postUsuarios(){
@@ -64,28 +85,7 @@ function postUsuarios(){
   }
 ///GET CON PARAMETROS///
 
-  function getUsuariosConParametros($id){
-    $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
-    if (!$link){
-      header(' ',true, 500);
-      print mysqli_error();
-      die;
-    }
-    mysqli_set_charset($link,'utf8');
-    $query= mysqli_query($link,"SELECT * FROM usuario WHERE id = $id");
-    
-    if ($usuario=mysqli_fetch_assoc($query)) {
-    header('Content-Type: application/json');
-    print json_encode($usuario);
-    }
-    else
-    {
-      header(' ',true,404);
-    }
-    mysqli_free_result($query);
-    mysqli_close($link);
-  }
-/*
+
   function patchUsuario($id){
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if(!$link){
@@ -94,8 +94,15 @@ function postUsuarios(){
     die;
     }
     mysqli_set_charset($link, 'utf8');
+    $id=$id+0;
     $usuario=json_decode(file_get_contents('php://input'), true);
-    $q=("SELECT * FROM usuario WHERE id=='$id'");
+     $nombre=mysqli_real_escape_string($link, $usuario['nombre']);
+     $mail=mysqli_real_escape_string($link, $usuario['mail']);
+     $contrasenia=mysqli_real_escape_string($link, $usuario['contrasenia']);
+
+     $usuario=json_decode(file_get_contents('php://input'), true);
+  
+    $q="UPDATE usuario SET nombre ='$nombre', mail='$mail', contrasenia='$contrasenia' WHERE id=$id";
     $query=mysqli_query($link,$q);  
     if ($query){
       header(' ', true, 201);
@@ -126,7 +133,7 @@ function postUsuarios(){
     }
     mysqli_close($link);
   } 
- */
+
   function getImagen(){
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if(!$link){
@@ -178,8 +185,4 @@ function postUsuarios(){
     mysqli_free_result($query);
     mysqli_close($link);
   }
-
-
-
-
   ?>
