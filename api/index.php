@@ -86,7 +86,7 @@ function postUsuarios(){
 ///GET CON PARAMETROS///
 
 
-  function patchUsuario($id){
+  function patchUsuarios($id){
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if(!$link){
     header(' ',true,500); 
@@ -112,7 +112,7 @@ function postUsuarios(){
     mysqli_close($link);
   }
 
-  function deleteUsuario($id){
+  function deleteUsuarios($id){
     $link=mysqli_connect(DBHOST,DBUSER,DBPASS,DBBASE);
     if(!$link){
       header(' ',true,500);

@@ -13,6 +13,7 @@
                     <th><strong>mail</strong></th>
                     <th><strong>contrasenia</strong></th>
                     <th><strong>rol</strong></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -22,12 +23,32 @@
                     <td>{{ usuario.mail }}</td>
                     <td>{{ usuario.contrasenia }}</td>
                     <td>{{ usuario.rol }}</td>
+                    <td>
+                        <button type="button"data-ng-click="editar(usuario)">Editar</button>
+                        <button type="button"data-ng-click="eliminar(usuario)">Eliminar</button>
+                    </td>
                 </tr>
             </tbody>
+            
+            <div class="row">
+                    <div class="col-lg-6 text-center">
+                        <h2>Nuevo usuario</h2>
+                        <div class="form-group">
+                            <input type="text" class="form-control"  placeholder="Nombre" data-ng-model="nuevoUsuario.nombre">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control"  placeholder="mail" data-ng-model="nuevoActor.mail">
+                        </div>
+                        <div class="form-group">
+                             <input type="text" class="form-control"  placeholder="contrasenia" data-ng-model="nuevoActor.contrasenia">
+                        </div>
+                        <button type="button" class="btn btn-success" data-ng-click="guardarUsuarioNuevo()">Guardar</button>
+                        <button type="button" class="btn btn-default" data-ng-click="cancelarUsuarioNuevo()">Cancelar</button>
+                    </div>
+
+            </div>
     </table>
   </div>
-<h1>Hola<h1/>
-
     <script src="js/index.js"></script>  
 </body>
 
