@@ -1,20 +1,22 @@
 angular.module('testApp', []).controller('testCtrl', function ($scope, $http, $timeout) {
   $scope.usuarios = [];
-  $scope.unUsuarioVacio = {
+  $scope.unUsuarioEditado = {
     nombre: '',
     mail: '',
-    contrasenia: ''
-  };
-  $scope.usuarioEditado = {
-    nombre: '',
-    mail: '',
-    contrasenia: ''
+    contrasenia: '',
+    id_rol: ''
   };
   $scope.nuevoUsuario = {
     nombre: '',
     mail: '',
     contrasenia: '',
     id_rol: 2
+  };
+  $scope.usuarioVacio = {
+    nombre: '',
+    mail: '',
+    contrasenia: '',
+    id_rol: ''
   };
 
   var initUsuarios = function () {
@@ -24,12 +26,10 @@ angular.module('testApp', []).controller('testCtrl', function ($scope, $http, $t
     })
   }
 
-  $scope.guardarUsuarioNuevo = function () {
-    // acá, tenes que diferenciar entre un usuario nuevo, y algo que ya cargaste con anterioridad
 
-    // id = '' ? post : patch (TENES que saber que es lo que estas modificando)
-    // PATCH api/usuarios/id/objetoUsuarioIncompleto
-    if ($scope.usuarioEditado == $scope.unUsuarioVacio) {//si esta vacio es porque es nuevo
+  $scope.guardarUsuarioNuevo = function () {
+    debugger
+    if (JSON.stringify($scope.unUsuarioEditado)==JSON.stringify($scope.usuarioVacio)) {
       $http.post('api/usuarios', $scope.nuevoUsuario)
         .then(function (response) {
           $timeout(function () {
@@ -49,6 +49,7 @@ angular.module('testApp', []).controller('testCtrl', function ($scope, $http, $t
           $timeout(function () {
             initUsuarios();
           }, 0);
+          debugger
         })
         .catch(function () {
           $timeout(function () {
@@ -60,7 +61,7 @@ angular.module('testApp', []).controller('testCtrl', function ($scope, $http, $t
 
 
 $scope.cancelarUsuarioNuevo = function () {
-  $scope.usuarioEditado = {
+  $scope.nuevoUsuario = {
     nombre: '',
     mail: '',
     contrasenia: '',
@@ -69,10 +70,19 @@ $scope.cancelarUsuarioNuevo = function () {
 }
 
 $scope.editar = function (usuario) {
+  var id;
+  // Asignar el objeto usuario completo al modelo nuevoUsuario, el cuál
+  // actualiza automaticamente el form.
   $scope.nuevoUsuario = usuario;
-  $scope.usuarioEditado = $scope.nuevoUsuario;
-}
+  $scope.unUsuarioEditado = $scope.nuevoUsuario;
 
+  /*$scope.usuarios.forEach(element => {
+    if (element==usuario){
+    id= element.id;
+  }
+  });*/
+
+}
 $scope.eliminar = function (usuario) {
   var id;
   $scope.usuarios.forEach(element => {
