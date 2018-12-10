@@ -104,20 +104,28 @@
                     <li class="list-group-item">{{imagen.comentario.descripcion}}</li>
                   </ul>
     </div>
--->
+    -->
 
         <table>
             <thead>
                 <tr>
                     <th><strong>ID</strong></th>
+<<<<<<< HEAD
                <!--     <th><strong>id_usuario</strong></th>
                     <th><strong>path</strong></th>
                     <th><strong>url</strong></th>
                 -->
+=======
+                    <th><strong>id_usuario</strong></th>
+                    <th><strong>id_muro</strong></th>
+                    <th><strong>path</strong></th>
+                    <th><strong>url</strong></th>
+>>>>>>> 8947031d39ba585f6c3ad67549dec086a6a569cd
                     <th></th>
                 </tr>
             </thead>
             <tbody>
+<<<<<<< HEAD
                 <tr data-ng-repeat="imagenConComentarios in ImagenesConComentarios">
                     <td>{{ imagenConComentarios.id }}</td>
                   <!--    <td>{{ imagenConComentarios.id_usuario }}</td>
@@ -126,6 +134,17 @@
                   -->  <td>
                         <button type="button" data-ng-click="editar()">Editar</button>
                         <button type="button" data-ng-click="eliminar()">Eliminar</button>
+=======
+                <tr data-ng-repeat="imagen in imagenes">
+                    <td>{{ imagen.id }}</td>
+                    <td>{{ imagen.id_usuario }}</td>
+                    <td>{{ imagen.id_muro }}</td>
+                    <td>{{ imagen.path }}</td>
+                    <td><img src="{{ imagen.url }}"alt="Description" height="150"/></td>
+                    <td>
+                        <button type="button" data-ng-click="editar(imagen)">Editar</button>
+                        <button type="button" data-ng-click="eliminar(imagen)">Eliminar</button>
+>>>>>>> 8947031d39ba585f6c3ad67549dec086a6a569cd
                     </td>
                 </tr>
             </tbody>

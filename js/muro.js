@@ -1,4 +1,4 @@
-angular.module('muroApp', []).controller('muroCtrl', function ($scope, $http, $timeout) {
+qangular.module('muroApp', []).controller('muroCtrl', function ($scope, $http, $timeout) {
   $imagenesConComentarios = [];
   $scope.imagenes = [];
 
