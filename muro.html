@@ -44,6 +44,7 @@
     <h3>Tu muro</h3>
 
     <div class="container-fluid" data-ng-app="muroApp" data-ng-controller="muroCtrl">
+        <!--
             <table>
                 <thead>
                     <tr>
@@ -95,25 +96,71 @@
                     </div>
     
                 </div>
-<!--
-    <div class="container-fluid" data-ng-app="muroApp" data-ng-controller="muroCtrl">
-            <ul class="list-group">
-                    <li class="list-group-item" data-ng-repeat="publicacion in publicaciones">{{publicacion.}}</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Morbi leo risus</li>
-                    <li class="list-group-item">Porta ac consectetur ac</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
+            
+    <div class="container-fluid">
+            <ul class="list-group" data-ng-repeat="imagen in imagenes">
+                    <li class="list-group-item">{{imagen.url}}</li>
+                        <ul data-ng-repeat="comentario in comentarios"></ul>
+                    <li class="list-group-item">{{imagen.comentario.descripcion}}</li>
                   </ul>
     </div>
 -->
 
-    <script src="js/muro.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+        <table>
+            <thead>
+                <tr>
+                    <th><strong>ID</strong></th>
+               <!--     <th><strong>id_usuario</strong></th>
+                    <th><strong>path</strong></th>
+                    <th><strong>url</strong></th>
+                -->
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="imagenConComentarios in ImagenesConComentarios">
+                    <td>{{ imagenConComentarios.id }}</td>
+                  <!--    <td>{{ imagenConComentarios.id_usuario }}</td>
+                    <td>{{ imagenConComentarios.path }}</td>
+                   <td><img src="{{ imagenConComentarios.url }}"alt="Description" height="150"/></td>
+                  -->  <td>
+                        <button type="button" data-ng-click="editar()">Editar</button>
+                        <button type="button" data-ng-click="eliminar()">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+
+            <div class="container">
+                <div class="col-lg-6 text-right">
+                    <h2>Nuevo Comentario</h2>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="usuario" data-ng-model="nuevaImagen.id_usuario">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="muro" data-ng-model="nuevaImagen.id_muro">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="path" data-ng-model="nuevaImagen.path">
+                    </div>
+                    <div class="form-group">
+                        <span class="input-group-addon">
+							<img data-ng-src="{{nuevaImagen.url || 'https://s3.amazonaws.com/whisperinvest-images/default.png' }}" height="150"></span>
+							<input type="text" class="form-control"  placeholder="URL de la foto" data-ng-model="nuevaImagen.url">
+                    </div>
+                    <button type="button" class="btn btn-success" data-ng-click="guardarImagenNueva()">Guardar</button>
+                    <button type="button" class="btn btn-default" data-ng-click="cancelarImagenNueva()">Cancelar</button>
+                </div>
+
+            </div>
+
+
+            <script src="js/muro.js"></script>
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+                crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
 </body>
 
 </html>
