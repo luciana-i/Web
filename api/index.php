@@ -181,7 +181,7 @@ function getComentariosConParametros($id)
   mysqli_close($link);
 }
 
-function postComentarios()
+function postComentarios($id)
 {
   $link = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
   if (!$link) {
@@ -192,16 +192,15 @@ function postComentarios()
   mysqli_set_charset($link, 'utf8');
   $comentario = json_decode(file_get_contents('php://input'), true);
   $id_usuario = mysqli_real_escape_string($link, $comentario['id_usuario']);
-  $id_muro = mysqli_real_escape_string($link, $comentario['id_muro']);
   $descripcion = mysqli_real_escape_string($link, $comentario['descripcion']);
-  $id_imagen = mysqli_real_escape_string($link, $comentario['id_imagen']);
+  $id_imagen = $id+0;
 
   if (isset($comentario['path_comentario'])) {
     echo ("entro en el isset comentario");
     $path = mysqli_real_escape_string($link, $comentario['path_comentario']);
-    $q = "INSERT INTO comentario (id_usuario, id_muro, descripcion, id_imagen, path_comentario) VALUES ('$id_usuario', '$id_muro', '$descripcion', '$id_imagen', '$path')";
+    $q = "INSERT INTO comentario (id_usuario, descripcion, id_imagen, path_comentario) VALUES ('$id_usuario', '$descripcion', '$id_imagen', '$path')";
   } else {
-    $q = "INSERT INTO comentario (id_usuario, id_muro, descripcion, id_imagen) VALUES ('$id_usuario', '$id_muro', '$descripcion', '$id_imagen')";
+    $q = "INSERT INTO comentario (id_usuario, descripcion, id_imagen) VALUES ('$id_usuario', '$descripcion', '$id_imagen')";
   }
   $comentario = json_decode(file_get_contents('php://input'), true);
 
@@ -340,16 +339,15 @@ function patchImagenes($id)
   $id = $id + 0;
   $imagen = json_decode(file_get_contents('php://input'), true);
   $id_usuario = mysqli_real_escape_string($link, $imagen['id_usuario']);
-  $id_muro = mysqli_real_escape_string($link, $imagen['id_muro']);
 
   if (isset($imagen['path'])) {
     echo("entro en el if");
     $path = mysqli_real_escape_string($link, $imagen['path']);
-    $q = "UPDATE imagen SET id_usuario='$id_usuario', id_muro='$id_muro', path='$path' WHERE id=$id";
+    $q = "UPDATE imagen SET id_usuario='$id_usuario', path='$path' WHERE id=$id";
   } else {
     echo("entro en el else");
     $url = mysqli_real_escape_string($link, $imagen['url']);
-    $q = "UPDATE imagen SET id_usuario='$id_usuario', id_muro='$id_muro', url='$url 'WHERE id=$id";
+    $q = "UPDATE imagen SET id_usuario='$id_usuario', url='$url 'WHERE id=$id";
   }
   $comentario = json_decode(file_get_contents('php://input'), true);
 
@@ -394,17 +392,17 @@ function getImagenesConParametros($id) ///iMAGENES CON COMENTARIOS
   }
   mysqli_set_charset($link, 'utf8');
   $id=$id+0;
-  $query = mysqli_query($link, "SELECT * FROM imagen WHERE id_usuario=$id");
+  $query = mysqli_query($link, "SELECT imagen.id, path, url, usuario.nombre, usuario.id as id_usuario FROM imagen INNER JOIN usuario ON imagen.id_usuario = usuario.id WHERE id_usuario=$id");
   $imagenes = [];
   $comentarios = [];
   while ($imagen = mysqli_fetch_assoc($query)) {
     $id_imagen = $imagen['id']+0;
-    $queryComentarios= mysqli_query($link,"SELECT id , path_comentario, descripcion FROM comentario WHERE id_imagen = $id_imagen");
+    $queryComentarios= mysqli_query($link,"SELECT id , path_comentario, descripcion FROM comentario WHERE id_imagen = $id_imagen AND id_usuario=$id");
     while($realComentarios=mysqli_fetch_assoc($queryComentarios)){ 
       array_push($comentarios, $realComentarios);
+      $imagen['comentarios']=$comentarios; 
     }
-  //  array_push($imagenes[$imagen]['comentarios'], $comentarios);
-  $imagen['comentarios']=$comentarios;  
+  //  array_push($imagenes[$imagen]['comentarios'], $comentarios);  
   $imagenes[] = $imagen;  
 
   }

@@ -105,53 +105,62 @@
                   </ul>
     </div>
     -->
-
+        <h2>Tu Muro</h2>
+        <div data-ng-repeat="imagenConComentarios in imagenesConComentarios">
+            {{ imagenConComentarios.id }} - {{ imagenConComentarios.id_usuario }}<br>
+            <a><img src="{{ imagenConComentarios.url }}" alt="Description" height="150" /></a>
+            <button type="button" data-ng-click="editarComentario(imagenConComentarios)">Editar</button>
+            <button type="button" data-ng-click="eliminarComentario(imagenConComentarios)">Eliminar</button>
+            <form ng-submit="guardarComentarioNuevo()">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="usuario" data-ng-model="comentarioImagen.id_usuario">
+                </div>
+                <div class="form-group">
+                    <textarea rows="4" cols="50" placeholder="descripcion" data-ng-model="comentarioImagen.descripcion">
+                           </textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="path" data-ng-model="comentarioImagen.path">
+                </div>
+                <input type="submit" id="submit" value="Guardar" />
+          <!--     <button type="button" class="btn btn-success" data-ng-click="guardarComentarioNuevo()">Guardar</button>--> 
+                <button type="button" class="btn btn-default" data-ng-click="cancelarComentarioNuevo()">Cancelar</button>
+            </form>
+            <div data-ng-repeat="comentario in imagenConComentarios.comentarios">
+                {{ comentario.id }} - {{ comentario.id_usuario }}<br>
+                <p>{{comentario.descripcion}}</p>
+                <button type="button" data-ng-click="editar(comentario)">Editar</button>
+                <button type="button" data-ng-click="eliminar(comentario)">Eliminar</button>
+            </div>
+        </div>
         <table>
             <thead>
                 <tr>
                     <th><strong>ID</strong></th>
-<<<<<<< HEAD
-               <!--     <th><strong>id_usuario</strong></th>
-                    <th><strong>path</strong></th>
-                    <th><strong>url</strong></th>
-                -->
-=======
                     <th><strong>id_usuario</strong></th>
-                    <th><strong>id_muro</strong></th>
                     <th><strong>path</strong></th>
                     <th><strong>url</strong></th>
->>>>>>> 8947031d39ba585f6c3ad67549dec086a6a569cd
+
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-<<<<<<< HEAD
-                <tr data-ng-repeat="imagenConComentarios in ImagenesConComentarios">
+                <tr data-ng-repeat="imagenConComentarios in imagenesConComentarios">
                     <td>{{ imagenConComentarios.id }}</td>
-                  <!--    <td>{{ imagenConComentarios.id_usuario }}</td>
+                    <td>{{ imagenConComentarios.id_usuario }}</td>
                     <td>{{ imagenConComentarios.path }}</td>
-                   <td><img src="{{ imagenConComentarios.url }}"alt="Description" height="150"/></td>
-                  -->  <td>
+                    <td><img src="{{ imagenConComentarios.url }}" alt="Description" height="150" /></td>
+                    <td>{{ imagenConComentarios.id }}</td>
+                    <td>
                         <button type="button" data-ng-click="editar()">Editar</button>
                         <button type="button" data-ng-click="eliminar()">Eliminar</button>
-=======
-                <tr data-ng-repeat="imagen in imagenes">
-                    <td>{{ imagen.id }}</td>
-                    <td>{{ imagen.id_usuario }}</td>
-                    <td>{{ imagen.id_muro }}</td>
-                    <td>{{ imagen.path }}</td>
-                    <td><img src="{{ imagen.url }}"alt="Description" height="150"/></td>
-                    <td>
-                        <button type="button" data-ng-click="editar(imagen)">Editar</button>
-                        <button type="button" data-ng-click="eliminar(imagen)">Eliminar</button>
->>>>>>> 8947031d39ba585f6c3ad67549dec086a6a569cd
                     </td>
                 </tr>
             </tbody>
 
             <div class="container">
                 <div class="col-lg-6 text-right">
-                    <h2>Nuevo Comentario</h2>
+                    <h2>Nueva Imagen</h2>
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="usuario" data-ng-model="nuevaImagen.id_usuario">
                     </div>
@@ -163,8 +172,9 @@
                     </div>
                     <div class="form-group">
                         <span class="input-group-addon">
-							<img data-ng-src="{{nuevaImagen.url || 'https://s3.amazonaws.com/whisperinvest-images/default.png' }}" height="150"></span>
-							<input type="text" class="form-control"  placeholder="URL de la foto" data-ng-model="nuevaImagen.url">
+                            <img data-ng-src="{{nuevaImagen.url || 'https://s3.amazonaws.com/whisperinvest-images/default.png' }}"
+                                height="150"></span>
+                        <input type="text" class="form-control" placeholder="URL de la foto" data-ng-model="nuevaImagen.url">
                     </div>
                     <button type="button" class="btn btn-success" data-ng-click="guardarImagenNueva()">Guardar</button>
                     <button type="button" class="btn btn-default" data-ng-click="cancelarImagenNueva()">Cancelar</button>
