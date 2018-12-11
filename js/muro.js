@@ -210,8 +210,8 @@ debugger
         }, 0);
       });
   }
-
-  initImagenes();
-  MostrarImagenConComentarios();
+  
+  initImagenes();  
   initComentarios();
+  MostrarImagenConComentarios();
 });

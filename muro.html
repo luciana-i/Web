@@ -109,8 +109,8 @@
         <div data-ng-repeat="imagenConComentarios in imagenesConComentarios">
             {{ imagenConComentarios.id }} - {{ imagenConComentarios.id_usuario }}<br>
             <a><img src="{{ imagenConComentarios.url }}" alt="Description" height="150" /></a>
-            <button type="button" data-ng-click="editarComentario(imagenConComentarios)">Editar</button>
-            <button type="button" data-ng-click="eliminarComentario(imagenConComentarios)">Eliminar</button>
+            <button type="button" data-ng-click="editarImagen(imagenConComentarios)">Editar</button>
+            <button type="button" data-ng-click="eliminarImagen(imagenConComentarios)">Eliminar</button>
             <form ng-submit="guardarComentarioNuevo()">
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="usuario" data-ng-model="comentarioImagen.id_usuario">
