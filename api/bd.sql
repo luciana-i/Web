@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-12-2018 a las 00:20:02
+-- Tiempo de generación: 12-12-2018 a las 17:59:56
 -- Versión del servidor: 10.1.36-MariaDB
 -- Versión de PHP: 7.2.11
 
@@ -34,16 +34,17 @@ CREATE TABLE `comentario` (
   `id_muro` int(11) NOT NULL,
   `descripcion` varchar(500) COLLATE utf8_spanish_ci DEFAULT NULL,
   `path_comentario` varchar(200) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `id_imagen` int(11) NOT NULL
+  `id_imagen` int(11) NOT NULL,
+  `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `comentario`
 --
 
-INSERT INTO `comentario` (`id`, `id_usuario`, `id_muro`, `descripcion`, `path_comentario`, `id_imagen`) VALUES
-(1, 4, 1, 'Hola soy una descripcion de la bd', NULL, 1),
-(2, 4, 1, 'Hola soy otra descripcion de la bd', NULL, 1);
+INSERT INTO `comentario` (`id`, `id_usuario`, `id_muro`, `descripcion`, `path_comentario`, `id_imagen`, `fecha`) VALUES
+(1, 4, 1, 'Si, lo saque de google, despues te paso el link', NULL, 1, '2018-12-11'),
+(2, 6, 1, 'Ey ese es un meme?', NULL, 1, '2018-12-10');
 
 -- --------------------------------------------------------
 
@@ -53,21 +54,23 @@ INSERT INTO `comentario` (`id`, `id_usuario`, `id_muro`, `descripcion`, `path_co
 
 CREATE TABLE `imagen` (
   `id` int(11) NOT NULL,
+  `id_publicacion` int(11) NOT NULL,
   `id_muro` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
   `path` varchar(200) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `url` varchar(500) COLLATE utf8_spanish_ci DEFAULT NULL
+  `url` varchar(500) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `imagen`
 --
 
-INSERT INTO `imagen` (`id`, `id_muro`, `id_usuario`, `path`, `url`) VALUES
-(1, 1, 4, NULL, 'https://img.thedailybeast.com/image/upload/c_crop,d_placeholder_euli9k,h_1440,w_2560,x_0,y_0/dpr_2.0/c_limit,w_740/fl_lossy,q_auto/v1531451526/180712-Weill--The-Creator-of-Pepe-hero_uionjj'),
-(2, 1, 4, NULL, NULL),
-(3, 1, 4, NULL, 'https://ep01.epimg.net/verne/imagenes/2017/02/07/articulo/1486460356_768109_1486460432_noticia_normal.jpg '),
-(4, 1, 4, NULL, 'http://www.crear-meme.com/public/img/memes_users/meme-english.jpg ');
+INSERT INTO `imagen` (`id`, `id_publicacion`, `id_muro`, `id_usuario`, `path`, `url`, `fecha`) VALUES
+(1, 1, 0, 4, NULL, 'https://img.thedailybeast.com/image/upload/c_crop,d_placeholder_euli9k,h_1440,w_2560,x_0,y_0/dpr_2.0/c_limit,w_740/fl_lossy,q_auto/v1531451526/180712-Weill--The-Creator-of-Pepe-hero_uionjj ', '2018-12-13'),
+(3, 3, 0, 4, NULL, 'https://i.dailymail.co.uk/i/pix/2017/12/12/21/4743A9B900000578-5172733-image-m-33_1513115818035.jpg ', '2018-10-13'),
+(4, 2, 1, 4, NULL, 'http://www.crear-meme.com/public/img/memes_users/meme-english.jpg ', '2018-12-10'),
+(5, 0, 0, 6, NULL, 'https://3.bp.blogspot.com/-zPA5onT8vDc/V7TrSEEsalI/AAAAAAAAATk/YY10-F9zjSEAX3qBreJ2o5xFEUU7F1suACLcB/s1600/661b3b2305aada261970d695fffbdce4.jpg', '2018-11-01');
 
 -- --------------------------------------------------------
 
@@ -149,9 +152,10 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id`, `nombre`, `mail`, `contrasenia`, `id_rol`) VALUES
-(1, 'luciana', 'luciana@luciana', '123', 1),
-(4, 'pepe', 'pepe@pepe', '123', 2),
-(6, 'jhon', 'jhon@jhon', '123', NULL);
+(1, 'Luciana Perez', 'luciana@luciana', '123', 1),
+(4, 'Pepe Garcia', 'pepe@pepe.com', '123', 2),
+(6, 'John Sanchez', 'jhon@jhon', '123', 2),
+(18, 'Maria Gimenez', 'maria@maria', '123', 2);
 
 --
 -- Índices para tablas volcadas
@@ -161,13 +165,15 @@ INSERT INTO `usuario` (`id`, `nombre`, `mail`, `contrasenia`, `id_rol`) VALUES
 -- Indices de la tabla `comentario`
 --
 ALTER TABLE `comentario`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_imagen` (`id_imagen`);
 
 --
 -- Indices de la tabla `imagen`
 --
 ALTER TABLE `imagen`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `muro`
@@ -191,7 +197,8 @@ ALTER TABLE `rol`
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `rol` (`id_rol`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -207,7 +214,7 @@ ALTER TABLE `comentario`
 -- AUTO_INCREMENT de la tabla `imagen`
 --
 ALTER TABLE `imagen`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `muro`
@@ -231,7 +238,29 @@ ALTER TABLE `rol`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `comentario`
+--
+ALTER TABLE `comentario`
+  ADD CONSTRAINT `comentario_ibfk_1` FOREIGN KEY (`id_imagen`) REFERENCES `imagen` (`id`);
+
+--
+-- Filtros para la tabla `imagen`
+--
+ALTER TABLE `imagen`
+  ADD CONSTRAINT `imagen_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`);
+
+--
+-- Filtros para la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD CONSTRAINT `rol` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
