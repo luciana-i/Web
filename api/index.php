@@ -1,4 +1,9 @@
 <?php
+
+define('ALGORITMO', 'HS512'); // Algoritmo de codificación/firma
+define('SECRET_KEY', 'AS..-.DJKLds·ak$dl%Ll!3kj12l3k1sa4_ÑÑ312ñ12LK3Jj4DK5A6LS7JDLK¿?asDqiwUEASDL,NMQWIEUIO'); //String largo y "complicado"
+
+require_once('jwt_helper.php');
 require_once('config.php');
 
 $bd = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
@@ -18,6 +23,76 @@ if (function_exists($funcionNombre))
 else
   header(' ', true, 400);
   
+
+/// JWT
+
+function postLogin()
+{
+  $loginData = json_decode(file_get_contents("php://input"), true);
+  $link = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
+  $mail = $loginData['mail'];
+  $query = mysqli_query($link, "SELECT usuario.id, contrasenia, mail, usuario.nombre, rol.rol FROM usuario INNER JOIN rol ON usuario.id_rol = rol.id WHERE mail = '$mail'");
+  $contrasenia = '';
+  $nombre = '';
+  $rol = 0;
+  $id = 0;
+  while ($usuario = mysqli_fetch_assoc($query)) {
+
+    $contrasenia = $usuario['contrasenia'];
+    $nombre = $usuario['nombre'];
+    $rol = $usuario['rol'];
+    $id = $usuario['id'];
+
+  }
+
+  if ($query && $contrasenia == $loginData['contrasenia']) {
+    $data = [
+      'nombre' => $nombre,
+      'mail' => $loginData['mail'],
+      'rol' => $rol,
+      'id' => $id,
+    ];
+
+    $jwt = JWT::encode(
+      $data,      // Datos a codificar en el JWT
+      SECRET_KEY, // Clave de coficicación/firma del token
+      ALGORITMO   // Algoritmo usado para codificar/firmar el token
+    );
+
+    $arregloToken = ['jwt' => $jwt];
+
+    header(' ', true, 200);
+    header('Content-type: application/json');
+    echo json_encode($arregloToken);
+  } else {
+    header(' ', true, 401);
+  }
+}
+
+function getTexto()
+{
+
+  $authHeader = getallheaders();
+
+  if (isset($authHeader['Authorization'])) {
+
+    list($jwt) = sscanf($authHeader['Authorization'], 'Bearer %s');
+    try {
+      $token = JWT::decode($jwt, SECRET_KEY, ALGORITMO);
+
+      header(' ', true, 200);
+      header('Content-type: application/json');
+      echo json_encode('Bienvenido a la pagina donde podrás compartir fotos con tus amigos, hazte nuevos amigos y comparte!');
+    } catch (Exception $e) {
+      header(' ', true, 401);
+    }
+
+  } else {
+    header(' ', true, 401);
+  }
+}
+
+
 ///GET  
 
 function getUsuarios()
@@ -124,9 +199,9 @@ function deleteUsuarios($id)
   }
   mysqli_set_charset($link, 'utf8');
   $id = $id + 0;
-  $queryComentarios= "DELETE FROM comentario WHERE id_usuario=$id";
+  $queryComentarios = "DELETE FROM comentario WHERE id_usuario=$id";
   $resComentarios = mysqli_query($link, $queryComentarios);
-  $queryImagnes= "DELETE FROM imagen WHERE id_usuario=$id";
+  $queryImagnes = "DELETE FROM imagen WHERE id_usuario=$id";
   $resImagenes = mysqli_query($link, $queryImagenes);
   $query = "DELETE FROM usuario WHERE id=$id";
 
@@ -193,7 +268,7 @@ function postComentarios($id)
   $comentario = json_decode(file_get_contents('php://input'), true);
   $id_usuario = mysqli_real_escape_string($link, $comentario['id_usuario']);
   $descripcion = mysqli_real_escape_string($link, $comentario['descripcion']);
-  $id_imagen = $id+0;
+  $id_imagen = $id + 0;
 
   if (isset($comentario['path_comentario'])) {
     echo ("entro en el isset comentario");
@@ -294,37 +369,93 @@ function getImagenes()
 
 function postImagenes()
 {
-  $link = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
-  if (!$link) {
-    header(' ', true, 500);
-    print mysqli_error();
-    die;
-  }
-  mysqli_set_charset($link, 'utf8');
-  $imagen = json_decode(file_get_contents('php://input'), true);
-  //var_dump(($imagen = json_decode(file_get_contents('php://input'), true)));die;
-  $id_usuario = mysqli_real_escape_string($link, $imagen['id_usuario']);
-  $id_muro = mysqli_real_escape_string($link, $imagen['id_muro']);
+  if (isset($_FILES['files'])) {
+    $errors = [];
+    $path = '../uploads/';
+    $extensions = ['jpg', 'jpeg', 'png', 'gif'];
 
-  if (($imagen['path'])!='') {
-    echo ("entro en el isset path");
-    $path = mysqli_real_escape_string($link, $imagen['path']);
-    $q = "INSERT INTO imagen (id_usuario, id_muro, path ) VALUES ('$id_usuario', '$id_muro', '$path')";
-  } else {
-    echo ("entro en el isset url");
-    $url = mysqli_real_escape_string($link, $imagen['url']);
-    $q = "INSERT INTO imagen (id_usuario, id_muro, url) VALUES ('$id_usuario', '$id_muro', '$url')";
-    var_dump($q);
-  }
-  $imagen = json_decode(file_get_contents('php://input'), true);
+    $all_files = count($_FILES['files']['tmp_name']);
 
-  $query =  mysqli_query($link, $q);
-  if ($query) {
-    header(' ', true, 201);
-  } else {
-    header(' ', true, 500);
+    for ($i = 0; $i < $all_files; $i++) {
+      $file_name = $_FILES['files']['name'][$i];
+      $file_tmp = $_FILES['files']['tmp_name'][$i];
+      $file_type = $_FILES['files']['type'][$i];
+      $file_size = $_FILES['files']['size'][$i];
+      $file_ext = strtolower(end(explode('.', $_FILES['files']['name'][$i])));
+
+      $file = $path . $file_name;
+
+
+      if (!in_array($file_ext, $extensions)) {
+        $errors[] = 'Extension not allowed: ' . $file_name . ' ' . $file_type;
+      }
+
+      if ($file_size > 2097152) {
+        $errors[] = 'File size exceeds limit: ' . $file_name . ' ' . $file_type;
+      }
+
+      if (empty($errors)) {
+        move_uploaded_file($file_tmp, $file);
+      }
+    }
+
+    if ($errors) print_r($errors);
+    $link = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
+    if (!$link) {
+      header(' ', true, 500);
+      print mysqli_error();
+      die;
+    }
+    mysqli_set_charset($link, 'utf8');
+
+    $imagen = json_decode(file_get_contents("php://input"), true);
+    $id_usuario = mysqli_real_escape_string($link, $imagen['id_usuario']);
+    $id_muro = mysqli_real_escape_string($link, $imagen['id_muro']);
+
+    $query = mysqli_query($link, "INSERT INTO imagen (id_usuario, id_muro, path ) VALUES ('$id_usuario', '$id_muro', '$file')");
+
+    $imagen = json_decode(file_get_contents('php://input'), true);
+
+    $query = mysqli_query($link, $q);
+    if ($query) {
+      header(' ', true, 201);
+    } else {
+      header(' ', true, 500);
+    }
+    mysqli_close($link);
+    
+  }else{
+    $link = mysqli_connect(DBHOST, DBUSER, DBPASS, DBBASE);
+    if (!$link) {
+      header(' ', true, 500);
+      print mysqli_error();
+      die;
+    }
+    mysqli_set_charset($link, 'utf8');
+    $imagen = json_decode(file_get_contents('php://input'), true);
+  
+    $id_usuario = mysqli_real_escape_string($link, $imagen['id_usuario']);
+
+   /* if (($imagen['path']) != '') {
+      echo ("entro en el isset path");
+      $path = mysqli_real_escape_string($link, $imagen['path']);
+      $q = "INSERT INTO imagen (id_usuario, id_muro, path ) VALUES ('$id_usuario', '$id_muro', '$path')";
+    } else {*/
+      echo ("entro en el isset url");
+      $url = mysqli_real_escape_string($link, $imagen['url']);
+      $q = "INSERT INTO imagen (id_usuario, id_muro, url) VALUES ('$id_usuario', '$id_muro', '$url')";
+      var_dump($q);
+ //   }
+    $imagen = json_decode(file_get_contents('php://input'), true);
+
+    $query = mysqli_query($link, $q);
+    if ($query) {
+      header(' ', true, 201);
+    } else {
+      header(' ', true, 500);
+    }
+    mysqli_close($link);
   }
-  mysqli_close($link);
 }
 
 function patchImagenes($id)
@@ -341,11 +472,11 @@ function patchImagenes($id)
   $id_usuario = mysqli_real_escape_string($link, $imagen['id_usuario']);
 
   if (isset($imagen['path'])) {
-    echo("entro en el if");
+    echo ("entro en el if");
     $path = mysqli_real_escape_string($link, $imagen['path']);
     $q = "UPDATE imagen SET id_usuario='$id_usuario', path='$path' WHERE id=$id";
   } else {
-    echo("entro en el else");
+    echo ("entro en el else");
     $url = mysqli_real_escape_string($link, $imagen['url']);
     $q = "UPDATE imagen SET id_usuario='$id_usuario', url='$url 'WHERE id=$id";
   }
@@ -370,7 +501,7 @@ function deleteImagenes($id)
   }
   mysqli_set_charset($link, 'utf8');
   $id = $id + 0;
-  $queryIntermedia="DELETE FROM comentario WHERE id_comentario=$id";
+  $queryIntermedia = "DELETE FROM comentario WHERE id_comentario=$id";
   $resIntermedia = mysqli_query($link, $queryIntermedia);
   $query = "DELETE FROM imagen WHERE id=$id";
   $res = mysqli_query($link, $query);
@@ -391,19 +522,19 @@ function getImagenesConParametros($id) ///iMAGENES CON COMENTARIOS
     die;
   }
   mysqli_set_charset($link, 'utf8');
-  $id=$id+0;
+  $id = $id + 0;
   $query = mysqli_query($link, "SELECT imagen.id, path, url, usuario.nombre, usuario.id as id_usuario FROM imagen INNER JOIN usuario ON imagen.id_usuario = usuario.id WHERE id_usuario=$id");
   $imagenes = [];
   $comentarios = [];
   while ($imagen = mysqli_fetch_assoc($query)) {
-    $id_imagen = $imagen['id']+0;
-    $queryComentarios= mysqli_query($link,"SELECT id , path_comentario, descripcion FROM comentario WHERE id_imagen = $id_imagen AND id_usuario=$id");
-    while($realComentarios=mysqli_fetch_assoc($queryComentarios)){ 
+    $id_imagen = $imagen['id'] + 0;
+    $queryComentarios = mysqli_query($link, "SELECT id , path_comentario, descripcion FROM comentario WHERE id_imagen = $id_imagen AND id_usuario=$id");
+    while ($realComentarios = mysqli_fetch_assoc($queryComentarios)) {
       array_push($comentarios, $realComentarios);
-      $imagen['comentarios']=$comentarios; 
+      $imagen['comentarios'] = $comentarios;
     }
   //  array_push($imagenes[$imagen]['comentarios'], $comentarios);  
-  $imagenes[] = $imagen;  
+    $imagenes[] = $imagen;
 
   }
   header('Content-Type: application/json');

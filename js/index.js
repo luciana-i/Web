@@ -69,7 +69,7 @@ $scope.cancelarUsuarioNuevo = function () {
   };
 }
 
-$scope.editar = function (usuario) {
+$scope.editarUsuario = function (usuario) {
   var id;
   // Asignar el objeto usuario completo al modelo nuevoUsuario, el cuál
   // actualiza automaticamente el form.
@@ -83,7 +83,7 @@ $scope.editar = function (usuario) {
   });*/
 
 }
-$scope.eliminar = function (usuario) {
+$scope.eliminarUsuario = function (usuario) {
   var id;
   $scope.usuarios.forEach(element => {
     if (element == usuario) {

@@ -1,0 +1,104 @@
+<div class="site-wrapper">
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
+            <div class="masthead clearfix">
+                <div class="inner">
+                    <h3 class="masthead-brand">Muro</h3>
+                    <nav>
+                        <ul class="nav masthead-nav">
+                            <li><a href="#/sistema">Home</a></li>
+                            <li><a href="#/features">Features</a></li>
+                            <li class="active"><a href="#/muro">Muro</a></li>
+                            <li><button class="btn btn-primary btn-xs" data-ng-click="rs_logout()">Logout</button></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="inner cover">
+                <h1 class="cover-heading">Sos {{ rol }}</h1>
+                <h2>Tu Muro</h2>
+                <div data-ng-repeat="imagenConComentarios in imagenesConComentarios">
+                    {{ imagenConComentarios.id }} - {{ imagenConComentarios.id_usuario }}<br>
+                    <a><img src="{{ imagenConComentarios.url }}" alt="Description" height="150" /></a>
+                    <button type="button" data-ng-click="editarImagen(imagenConComentarios)">Editar</button>
+                    <button type="button" data-ng-click="eliminarImagen(imagenConComentarios)">Eliminar</button>
+                    <br>
+                    <h4>Comentario</h4>
+                    <form ng-submit="guardarComentarioNuevo()">
+                        <!--    <div class="form-group">
+                    <input type="text" class="form-control" placeholder="usuario" data-ng-model="comentarioImagen.id_usuario">
+                </div>
+            -->
+                        <div class="form-group">
+                            <textarea rows="4" cols="50" placeholder="descripcion" data-ng-model="comentarioImagen.descripcion">
+                           </textarea>
+                        </div>
+                        <input type="submit" id="submit" value="Guardar" />
+                        <!--     <button type="button" class="btn btn-success" data-ng-click="guardarComentarioNuevo()">Guardar</button>-->
+                        <button type="button" class="btn btn-default" data-ng-click="cancelarComentarioNuevo()">Cancelar</button>
+                    </form>
+                    <div data-ng-repeat="comentario in imagenConComentarios.comentarios">
+                        {{ comentario.id }} - {{ comentario.id_usuario }}<br>
+                        <p>{{comentario.descripcion}}</p>
+                        <button type="button" data-ng-click="editar(comentario)">Editar</button>
+                        <button type="button" data-ng-click="eliminar(comentario)">Eliminar</button>
+                    </div>
+                </div>
+                <!--     <table>
+            <thead>
+                <tr>
+                    <th><strong>ID</strong></th>
+                    <th><strong>id_usuario</strong></th>
+                    <th><strong>path</strong></th>
+                    <th><strong>url</strong></th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="imagenConComentarios in imagenesConComentarios">
+                    <td>{{ imagenConComentarios.id }}</td>
+                    <td>{{ imagenConComentarios.id_usuario }}</td>
+                    <td>{{ imagenConComentarios.path }}</td>
+                    <td><img src="{{ imagenConComentarios.url }}" alt="Description" height="150" /></td>
+                    <td>{{ imagenConComentarios.id }}</td>
+                    <td>
+                        <button type="button" data-ng-click="editar()">Editar</button>
+                        <button type="button" data-ng-click="eliminar()">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody> -->
+
+                <div class="container">
+                    <div class="col-lg-6 text-right">
+                        <h2>Nueva Imagen</h2>
+                        <form ng-submit="guardarImagenNueva()" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label data-ng-model="nuevaImagen.id_usuario"></label>
+                            </div>
+                            <div class="form-group">
+                                <input type="file" name="files[]" multiple data-ng-model="nuevaImagen.path">
+                                <input type="submit" value="Subir Archivo" name="submit">
+                            </div>
+                            <div class="form-group">
+                                <span class="input-group-addon">
+                                    <img data-ng-src="{{nuevaImagen.url}}" height="150"></span>
+                                <input type="text" class="form-control" placeholder="URL de la foto" data-ng-model="nuevaImagen.url">
+                            </div>
+                            <button type="button" class="btn btn-success" data-ng-click="guardarImagenNueva()">Guardar</button>
+                            <button type="button" class="btn btn-default" data-ng-click="cancelarImagenNueva()">Cancelar</button>
+                            </div>
+                         </form>
+                </div>
+            </div>
+            <div class="mastfoot">
+                <div class="inner">
+                    <p>Features template for <a href="http://getbootstrap.com">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap core JavaScript ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="bootstrap/js/bootstrap.min.js"></script>
