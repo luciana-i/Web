@@ -1,154 +1,197 @@
 angular.module('miApp', ['ui.router', 'satellizer'])
 
-	.controller('featuresCtrl', function ($scope, $http, $auth, $state) {
-		var initTexto = function () {
-			$scope.texto = 'Texto de features';
-			$scope.nombre = 'Loco Features';
+	.controller('galeriaCtrl', function ($scope, $http, $auth, $state) {
+		$scope.imagenes = [];
+		var initImagenes = function () {
+			$http.get('api/imagenes').then(function (response) {
+				$scope.imagenes = response.data;
+			})
 		}
-
-		initTexto();
+		initImagenes();
 	})
+	.controller('userCtrl', function ($scope, $http, $auth, $state) {
+		$scope.usuarios = [];
+		$scope.usuario = {
+			nombre: '',
+			mail: '',
+			contrasenia: '',
+			id_rol: ''
+		};
+		var initUsuarios = function () {
+			$http.get('api/usuarios').then(function (response) {
+				$scope.usuarios = response.data;
+			})
+		}
+		$scope.eliminarUsuario = function (usuario) {
+			$http.delete('api/usuarios/' + usuario.id)
+				.then(function (response) {
+					$timeout(function () {
+						initUsuarios();
+					}, 0);
+				})
+				.catch(function () {
+					$timeout(function () {
+						alert('Error borrando usuario');
+					}, 0);
+				});
+		}
+		$scope.guardarUsuarioEditado = function () {
+			$http.patch('api/usuarios/' + $scope.usuario.id, $scope.usuario)
+				.then(function (response) {
+					$timeout(function () {
+						initUsuarios();
+					}, 0);
+
+				})
+				.catch(function () {
+					$timeout(function () {
+						alert('Error guardando usuario editado');
+					}, 0);
+				});
+
+			$scope.cancelarUsuario = function () {
+				$scope.usuario = {
+					nombre: '',
+					mail: '',
+					contrasenia: '',
+					id_rol: ''
+				};
+			}
+			initUsuarios();
+		}
+		$scope.editarUsuario = function (usuario) {
+			var id;
+			$scope.nuevoUsuario = usuario;
+			$scope.unUsuarioEditado = $scope.nuevoUsuario;
+
+		}
+	})
+
 	.controller('muroCtrl', function ($scope, $http, $auth, $state) {
-			$scope.rol = $auth.getPayload().rol;
-			 
-			if ($auth.getPayload().rol == "admin") {
-				$scope.usuarios = [];
-				$scope.unUsuarioEditado = {
-					nombre: '',
-					mail: '',
-					contrasenia: '',
-					id_rol: ''
-				};
-				$scope.nuevoUsuario = {
-					nombre: '',
-					mail: '',
-					contrasenia: '',
-					id_rol: 2
-				};
-				$scope.usuarioVacio = {
-					nombre: '',
-					mail: '',
-					contrasenia: '',
-					id_rol: ''
-				};
+		$scope.rol = $auth.getPayload().rol;
+		$scope.imagenesConComentarios = [];
+		$scope.imagenes = [];
+		$scope.imagenAux = {
+			id_muro: '',
+			id_usuario: '',
+			path: '',
+			url: '',
+			fecha: ''
+		};
+		$scope.unaImagenVacia = {
+			id_muro: '',
+			id_usuario: '',
+			path: '',
+			url: '',
+			fecha: ''
+		};
+		$scope.imagenEditada = {
+			id_muro: '',
+			id_usuario: '',
+			path: '',
+			url: '',
+			fecha: ''
+		};
+		$scope.nuevaImagen = {
+			id_muro: '',
+			id_usuario: '',
+			path: '',
+			url: '',
+			fecha: ''
 
-				var initUsuarios = function () {
-					$http.get('api/usuarios').then(function (response) {
-						$scope.usuarios = response.data;
+		};
+		///CONTROLLER DE COMENTARIOS
+		$scope.comentarios = [];
+		$scope.unComentarioEditado = {
+			id_usuario: '',
+			id_muro: '',
+			descripcion: '',
+			path_comentario: '',
+			id_imagen: '',
+			fecha: ''
+		};
+		$scope.nuevoComentario = {
+			id_usuario: '',
+			id_muro: '',
+			descripcion: '',
+			path_comentario: '',
+			id_imagen: '',
+			fecha: ''
+		};
+		$scope.unComentarioVacio = {
+			id_usuario: '',
+			id_muro: '',
+			descripcion: '',
+			path_comentario: '',
+			id_imagen: '',
+			fecha: ''
+		};
+		$scope.comentarioImagen = {
+			id_usuario: '',
+			id_muro: '',
+			descripcion: '',
+			path_comentario: '',
+			id_imagen: '',
+			fecha: ''
+		};
 
-					})
-				}
+		var initComentarios = function () {
+			$http.get('api/comentarios').then(function (response) {
+				$scope.comentarios = response.data;
+			})
+		}
+		var fecha = function () {
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth() + 1; //January is 0!
+			var yyyy = today.getFullYear();
 
-
-				$scope.guardarUsuarioNuevo = function () {
-					 
-					if (JSON.stringify($scope.unUsuarioEditado) == JSON.stringify($scope.usuarioVacio)) {
-						$http.post('api/usuarios', $scope.nuevoUsuario)
-							.then(function (response) {
-								$timeout(function () {
-									$scope.cancelarUsuarioNuevo();
-									initUsuarios();
-								}, 0);
-							})
-							.catch(function () {
-								$timeout(function () {
-									$scope.cancelarUsuarioNuevo();
-									alert('Error guardando nuevo usuario');
-								}, 0);
-							});
-					} else {
-						$http.patch('api/usuarios/' + $scope.nuevoUsuario.id, $scope.nuevoUsuario)
-							.then(function (response) {
-								$timeout(function () {
-									initUsuarios();
-								}, 0);
-								 
-							})
-							.catch(function () {
-								$timeout(function () {
-									alert('Error guardando usuario editado');
-								}, 0);
-							});
-					}
-				}
-
-
-				$scope.cancelarUsuarioNuevo = function () {
-					$scope.nuevoUsuario = {
-						nombre: '',
-						mail: '',
-						contrasenia: '',
-						id_rol: ''
-					};
-				}
-
-				$scope.editarUsuario = function (usuario) {
-					var id;
-					$scope.nuevoUsuario = usuario;
-					$scope.unUsuarioEditado = $scope.nuevoUsuario;
-
-				}
-				$scope.eliminarUsuario = function (usuario) {
-					var id;
-					$scope.usuarios.forEach(element => {
-						if (element == usuario) {
-							id = element.id;
-						}
-
-					});
-					$http.delete('api/usuarios/' + id)
-						.then(function (response) {
-							$timeout(function () {
-								initUsuarios();
-							}, 0);
-						})
-						.catch(function () {
-							$timeout(function () {
-								alert('Error borrando usuario');
-							}, 0);
-						});
-				}
-
-				initUsuarios();
+			if (dd < 10) {
+				dd = '0' + dd
 			}
 
-			$scope.imagenesConComentarios = [];
-			$scope.imagenes = [];
-			$scope.imagenAux = {
-				id_muro: '',
-				id_usuario: '',
-				path: '',
-				url: ''
-			};
-			$scope.unaImagenVacia = {
-				id: '',
-				id_muro: '',
-				id_usuario: '',
-				path: '',
-				url: ''
-			};
-			$scope.imagenEditada = {
-				id: '',
-				id_muro: '',
-				id_usuario: '',
-				path: '',
-				url: ''
-			};
-			$scope.nuevaImagen = {
-				id_muro: '',
-				id_usuario: '',
-				path: '',
-				url: ''
-			};
-			///CONTROLLER DE COMENTARIOS
-			$scope.comentarios = [];
-			$scope.unComentarioEditado = {
-				id_usuario: '',
-				id_muro: '',
-				descripcion: '',
-				path_comentario: '',
-				id_imagen: ''
-			};
+			if (mm < 10) {
+				mm = '0' + mm
+			}
+
+			today = mm + '/' + dd + '/' + yyyy;
+			return today;
+		}
+
+		$scope.guardarComentarioNuevo = function () {
+			$scope.comentarioImagen['fecha'] = fecha;
+			$scope.comentarioImagen.id_usuario = $auth.getPayload().id;
+			if ($scope.unComentarioEditado === $scope.unComentarioVacio) {
+				$http.post('api/comentarios ' + $scope.comentarioImagen.id, $scope.comentarioImagen)
+					.then(function (response) {
+						$timeout(function () {
+							$scope.cancelarComentarioNuevo();
+							initComentarios();
+						}, 0);
+					})
+					.catch(function () {
+						$timeout(function () {
+							$scope.cancelarComentarioNuevo();
+							alert('Error guardando nuevo Comentario');
+						}, 0);
+					});
+			} else {
+				$http.patch('api/comentarios/' + $scope.nuevoComentario.id, $scope.comentarioImagen)
+					.then(function (response) {
+						console.log(response.data);
+						$timeout(function () {
+							initComentarios();
+						}, 0);
+					})
+					.catch(function () {
+						$timeout(function () {
+							alert('Error guardando comentarios editado');
+						}, 0);
+					});
+			}
+
+		}
+		$scope.cancelarComentarioNuevo = function () {
 			$scope.nuevoComentario = {
 				id_usuario: '',
 				id_muro: '',
@@ -156,129 +199,67 @@ angular.module('miApp', ['ui.router', 'satellizer'])
 				path_comentario: '',
 				id_imagen: ''
 			};
-			$scope.unComentarioVacio = {
-				id_usuario: '',
-				id_muro: '',
-				descripcion: '',
-				path_comentario: '',
-				id_imagen: ''
-			};
-			$scope.comentarioImagen = {
-				id_usuario: '',
-				id_muro: '',
-				descripcion: '',
-				path_comentario: '',
-				id_imagen: ''
-			};
+		}
 
-			var initComentarios = function () {
-				$http.get('api/comentarios').then(function (response) {
-					$scope.comentarios = response.data;
+
+		$scope.editarComentario = function (Comentario) {
+
+			$scope.nuevoComentario = Comentario;
+			$scope.unComentarioEditado = $scope.nuevoComentario;
+
+		}
+		$scope.eliminarComentario = function (comentario) {
+			$http.delete('api/Comentarios/' + comentario.id)
+				.then(function (response) {
+					$timeout(function () {
+						initComentarios();
+					}, 0);
 				})
-			}
+				.catch(function () {
+					$timeout(function () {
+						alert('Error borrando Comentario');
+					}, 0);
+				});
+		}
 
 
-			$scope.guardarComentarioNuevo = function () {
-				$scope.comentarioImagen.id_usuario=$auth.getPayload().id;
-				if ($scope.unComentarioEditado === $scope.unComentarioVacio) {
-					$http.post('api/comentarios ' + $scope.comentarioImagen.id, $scope.comentarioImagen)
-						.then(function (response) {
-							$timeout(function () {
-								$scope.cancelarComentarioNuevo();
-								initComentarios();
-							}, 0);
-						})
-						.catch(function () {
-							$timeout(function () {
-								$scope.cancelarComentarioNuevo();
-								alert('Error guardando nuevo Comentario');
-							}, 0);
-						});
-				} else {
-					$http.patch('api/comentarios/' + $scope.nuevoComentario.id, $scope.comentarioImagen)
-						.then(function (response) {
-							console.log(response.data);
-							$timeout(function () {
-								initComentarios();
-							}, 0);
-						})
-						.catch(function () {
-							$timeout(function () {
-								alert('Error guardando comentarios editado');
-							}, 0);
-						});
+
+		var initImagenes = function () {
+			$http.get('api/imagenes').then(function (response) {
+				$scope.imagenes = response.data;
+			})
+		}
+
+		var MostrarImagenConComentarios = function () {
+			debugger
+			$http.get('api/imagenes/' + $auth.getPayload().id).then(function (response) {
+				$scope.imagenesConComentarios = response.data;
+			})
+		}
+
+		$scope.guardarImagenNueva = function () {
+			const url = '/Web/api/index.php';
+			const form = document.querySelector('form');
+			// Listen for form submit
+			form.addEventListener('submit', e => {
+				e.preventDefault();
+				// Gather files and begin FormData
+				const files = document.querySelector('[type=file]').files;
+				const formData = new FormData();
+				// Append files to files array
+				for (let i = 0; i < files.length; i++) {
+					let file = files[i];
+
+					formData.append('files[]', file);
 				}
 
-			}
-			$scope.cancelarComentarioNuevo = function () {
-				$scope.nuevoComentario = {
-					id_usuario: '',
-					id_muro: '',
-					descripcion: '',
-					path_comentario: '',
-					id_imagen: ''
-				};
-			}
-
-
-			$scope.editarComentario = function (Comentario) {
-				 
-				$scope.nuevoComentario = Comentario;
-				$scope.unComentarioEditado = $scope.nuevoComentario;
-
-			}
-			$scope.eliminarComentario = function (comentario) {
-				$http.delete('api/Comentarios/' + comentario.id)
-					.then(function (response) {
-						$timeout(function () {
-							initComentarios();
-						}, 0);
-					})
-					.catch(function () {
-						$timeout(function () {
-							alert('Error borrando Comentario');
-						}, 0);
-					});
-			}
-
-			
-
-			var initImagenes = function () {
-				$http.get('api/imagenes').then(function (response) {
-					$scope.imagenes = response.data;
-				})
-			}
-
-			var MostrarImagenConComentarios = function () {
-				 debugger
-				$http.get('api/imagenes/' + $auth.getPayload().id).then(function (response) {
-					$scope.imagenesConComentarios = response.data;
-				})
-			}
-
-			$scope.guardarImagenNueva = function () {
-				const url = '/Web/api/index.php';
-				const form = document.querySelector('form');
-				// Listen for form submit
-				form.addEventListener('submit', e => {
-				   e.preventDefault();
-				 // Gather files and begin FormData
-				   const files = document.querySelector('[type=file]').files;
-				   const formData = new FormData();
-				// Append files to files array
-				   for (let i = 0; i < files.length; i++) {
-					   let file = files[i];
-				
-					   formData.append('files[]', file);
-				   }
-				
 				/*   fetch(url, {
 					   method: 'POST',
 					   body: formData
 				   }).then(response => {
 					   console.log(response);
 				   });*/
-			
+
 				if (JSON.stringify($scope.imagenEditada) == JSON.stringify($scope.unaImagenVacia)) { //si esta vacio es porque es nuevo
 					$http.post('api/imagenes', $scope.nuevaImagen)
 						.then(function (response) {
@@ -294,7 +275,7 @@ angular.module('miApp', ['ui.router', 'satellizer'])
 							}, 0);
 						});
 				} else {
-					 
+
 					$http.patch('api/imagenes/' + id, $scope.nuevaImagen)
 						.then(function (response) {
 							$timeout(function () {
@@ -308,40 +289,40 @@ angular.module('miApp', ['ui.router', 'satellizer'])
 						});
 				}
 			});
-			}
+		}
 
 
-			$scope.cancelarImagenNueva = function () {
-				$scope.nuevaImagen = {
-					id_muro: '',
-					id_usuario: '',
-					path: '',
-					url: ''
-				};
-			}
+		$scope.cancelarImagenNueva = function () {
+			$scope.nuevaImagen = {
+				id_muro: '',
+				id_usuario: '',
+				path: '',
+				url: ''
+			};
+		}
 
-			$scope.editarImagen = function (imagen) {
-				$scope.nuevaImagen = imagen;
-				$scope.imagenEditada = $scope.nuevaImagen;
-			}
+		$scope.editarImagen = function (imagen) {
+			$scope.nuevaImagen = imagen;
+			$scope.imagenEditada = $scope.nuevaImagen;
+		}
 
-			$scope.eliminarImagen = function (imagen) {
-				$http.delete('api/imagenes/' + imagen.id)
-					.then(function (response) {
-						$timeout(function () {
-							initImagenes();
-						}, 0);
-					})
-					.catch(function () {
-						$timeout(function () {
-							alert('Error borrando imagen');
-						}, 0);
-					});
-			}
+		$scope.eliminarImagen = function (imagen) {
+			$http.delete('api/imagenes/' + imagen.id)
+				.then(function (response) {
+					$timeout(function () {
+						initImagenes();
+					}, 0);
+				})
+				.catch(function () {
+					$timeout(function () {
+						alert('Error borrando imagen');
+					}, 0);
+				});
+		}
 
-			initImagenes();
-			initComentarios();
-			MostrarImagenConComentarios();
+		initImagenes();
+		initComentarios();
+		MostrarImagenConComentarios();
 	})
 
 	.controller('sistemaCtrl', function ($scope, $http, $auth, $state) {
@@ -404,10 +385,10 @@ angular.module('miApp', ['ui.router', 'satellizer'])
 					necesitaLogin: loginRequerido
 				},
 			})
-			.state('features', {
-				url: '/features',
-				templateUrl: 'vistas/features.html',
-				controller: 'featuresCtrl',
+			.state('galeria', {
+				url: '/galeria',
+				templateUrl: 'vistas/galeria.html',
+				controller: 'galeriaCtrl',
 				resolve: {
 					necesitaLogin: loginRequerido
 				},
@@ -423,6 +404,14 @@ angular.module('miApp', ['ui.router', 'satellizer'])
 			.state('404', {
 				url: '/404',
 				templateUrl: 'vistas/404.html',
+			})
+			.state('users', {
+				url: '/user',
+				templateUrl: 'vistas/users.html',
+				controller: 'userCtrl',
+				resolve: {
+					necesitaLogin: saltarSiUser
+				}
 			});
 
 		$urlRouterProvider.otherwise("/404");
@@ -435,7 +424,21 @@ angular.module('miApp', ['ui.router', 'satellizer'])
 				deferred.resolve();
 			}
 			return deferred.promise;
-		};
+		}
+
+		function saltarSiUser($q, $auth) {
+			var deferred = $q.defer();
+			if ($auth.isAuthenticated()) {
+				if ($auth.getPayload().rol == 'user') {
+					deferred.reject();
+				} else {
+					deferred.resolve();
+				}
+			} else {
+				$location.path('/sistema');
+			}
+			return deferred.promise;
+		}
 
 		function loginRequerido($q, $auth, $location) {
 			var deferred = $q.defer();
@@ -447,13 +450,3 @@ angular.module('miApp', ['ui.router', 'satellizer'])
 			return deferred.promise;
 		}
 	})
-
-;
-/*
-			
-			
-			
-			
-	
-
-*/

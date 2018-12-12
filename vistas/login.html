@@ -7,4 +7,17 @@
 		<input type="password" data-ng-model="contrasenia" id="inputPassword" class="form-control" placeholder="Contraseña" required>
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
 	</form>
+
+	<form class="form-signin" data-ng-submit="register()">
+			<h2 class="form-signin">No sos usuario? Registrate!</h2>
+			<label for="text" class="sr-only">Nombre</label>
+			<input type="text" data-ng-model="nuevoUsuario.nombre" id="inputNombreRegister" class="form-control" placeholder="Nombre" required autofocus>
+			<label for="inputEmail" class="sr-only">Dirección de e-mail</label>
+			<input type="email" data-ng-model="nuevoUsuario.mail" id="inputEmailRegister" class="form-control" placeholder="Dirección de e-mail" required>
+			<label for="inputPassword" class="sr-only">Contraseña</label>
+			<input type="password" data-ng-model="nuevoUsuario.contrasenia" id="inputPasswordRegister" class="form-control" placeholder="Contraseña" required>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+		</form>
+
+
 </div>

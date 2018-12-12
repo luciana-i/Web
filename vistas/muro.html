@@ -7,7 +7,7 @@
                     <nav>
                         <ul class="nav masthead-nav">
                             <li><a href="#/sistema">Home</a></li>
-                            <li><a href="#/features">Features</a></li>
+                            <li><a href="#/galeria">Galería</a></li>
                             <li class="active"><a href="#/muro">Muro</a></li>
                             <li><button class="btn btn-primary btn-xs" data-ng-click="rs_logout()">Logout</button></li>
                         </ul>
@@ -17,8 +17,8 @@
             <div class="inner cover">
                 <h1 class="cover-heading">Sos {{ rol }}</h1>
                 <h2>Tu Muro</h2>
-                <div data-ng-repeat="imagenConComentarios in imagenesConComentarios">
-                    {{ imagenConComentarios.id }} - {{ imagenConComentarios.id_usuario }}<br>
+                <div data-ng-repeat="imagenConComentarios in imagenesConComentarios | orderBy:'-fecha'">
+                    <p>Fecha: {{ imagenConComentarios.fecha }}  &nbsp &nbsp &nbsp Nombre: {{ imagenConComentarios.nombre }}</p>
                     <a><img src="{{ imagenConComentarios.url }}" alt="Description" height="150" /></a>
                     <button type="button" data-ng-click="editarImagen(imagenConComentarios)">Editar</button>
                     <button type="button" data-ng-click="eliminarImagen(imagenConComentarios)">Eliminar</button>
@@ -37,8 +37,8 @@
                         <!--     <button type="button" class="btn btn-success" data-ng-click="guardarComentarioNuevo()">Guardar</button>-->
                         <button type="button" class="btn btn-default" data-ng-click="cancelarComentarioNuevo()">Cancelar</button>
                     </form>
-                    <div data-ng-repeat="comentario in imagenConComentarios.comentarios">
-                        {{ comentario.id }} - {{ comentario.id_usuario }}<br>
+                    <div data-ng-repeat="comentario in imagenConComentarios.comentarios | orderBy:'-fecha'">
+                       <p>Fecha {{ comentario.fecha }} &nbsp &nbsp &nbsp   {{ comentario.nombre }} dice: </p> 
                         <p>{{comentario.descripcion}}</p>
                         <button type="button" data-ng-click="editar(comentario)">Editar</button>
                         <button type="button" data-ng-click="eliminar(comentario)">Eliminar</button>

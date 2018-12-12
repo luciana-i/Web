@@ -3,24 +3,32 @@
 		<div class="cover-container">
 			<div class="masthead clearfix">
 				<div class="inner">
-					<h3 class="masthead-brand">Features</h3>
+					<h3 class="masthead-brand">Galería de imagenes</h3>
 					<nav>
 						<ul class="nav masthead-nav">
-							<li class="active"><a href="#">Home</a></li>
-							<li><a href="#/features">Features</a></li>
-							<li><a href="#/muro">Muro</a></li>
+								<li><a href="#/sistema">Home</a></li>
+								<li class="active"><a href="#/galeria">Galería</a></li>
+								<li ><a href="#/muro">Muro</a></li>
 							<li><button class="btn btn-primary btn-xs" data-ng-click="rs_logout()">Logout</button></li>
 						</ul>
 					</nav>
 				</div>
 			</div>
-			<div class="inner cover">
-				<h1 class="cover-heading">Hola, {{ nombre }}.</h1>
-				<p class="lead">{{ texto }}</p>
-				<p class="lead">
-					<a href="#" class="btn btn-lg btn-default">Learn more</a>
-				</p>
+			<div class="container">
+<br><br>
+				<!-- <h1 class="my-6 text-center text-lg-center"></h1> -->
+
+				<div class="row text-center text-lg-left" data-ng-repeat="imagen in imagenes">
+					<div class="col-lg-3 col-md-4 col-xs-6">
+						<p>Fecha: {{ imagen.fecha }} &nbsp &nbsp &nbsp Nombre: {{ imagen.nombre }}</p>
+						<img  class="img-fluid img-thumbnail" src="{{ imagen.url }}"  />
+						<img  class="img-fluid img-thumbnail" src="{{ imagen.path }}"  />
+						<a href="#" class="d-block mb-4 h-100">
+						</a>
+					</div>
+				</div>
 			</div>
+
 			<div class="mastfoot">
 				<div class="inner">
 					<p>Features template for <a href="http://getbootstrap.com">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>.</p>
